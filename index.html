@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base target="_top">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h3 { margin-top: 0; color: #333; text-align: center; }
+        .input-group { margin-bottom: 12px; }
+        .input-group label { display: block; margin-bottom: 5px; color: #666; font-size: 13px; }
+        .input-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 14px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background: #45a049; }
+        .error-msg { color: #f44336; font-size: 12px; margin-top: 8px; display: none; text-align: center; }
+        #welcome-interface { display: none; text-align: center; }
+        .logout-btn { background: #f44336; margin-top: 15px; }
+        .logout-btn:hover { background: #da190b; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="login-interface">
+        <h3>會員登入</h3>
+        <div class="input-group">
+            <label>帳號 (Username)</label>
+            <input type="text" id="username" placeholder="請輸入帳號">
+        </div>
+        <div class="input-group">
+            <label>密碼 (Password)</label>
+            <input type="password" id="password" placeholder="請輸入密碼">
+        </div>
+        <button onclick="handleLogin()">登入</button>
+        <div class="error-msg" id="error-message">❌ 帳號或密碼錯誤！</div>
+    </div>
+
+    <div class="container" id="welcome-interface">
+        <h3>🎉 歡迎回來！</h3>
+        <p>Hi, <span id="display-username" style="color: #4CAF50; font-weight:bold;">使用者</span></p>
+        <p>這是在 Google Sheets 側邊欄運行的網頁！</p>
+        <button class="logout-btn" onclick="handleLogout()">登出</button>
+    </div>
+
+    <script>
+        function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-message');
+
+            // 呼叫 GAS 後端的 verifyLogin 函式進行驗證
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if (result.success) {
+                        errorMsg.style.display = 'none';
+                        document.getElementById('login-interface').style.display = 'none';
+                        document.getElementById('welcome-interface').style.display = 'block';
+                        document.getElementById('display-username').innerText = result.username;
+                    } else {
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .verifyLogin(user, pass);
+        }
+
+        function handleLogout() {
+            document.getElementById('welcome-interface').style.display = 'none';
+            document.getElementById('login-interface').style.display = 'block';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>
