@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub 遠端登入測試中</title>
+    <title>GitHub 遠端登入系統</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 30px; background-color: #eef2f3; display: flex; justify-content: center; }
         .container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 320px; text-align: center; }
@@ -22,7 +22,7 @@
 <body>
 
     <div class="container" id="login-interface">
-        <h2>會員登入 (GitHub)</h2>
+        <h2>系統登入</h2>
         <div class="input-group">
             <label>帳號</label>
             <input type="text" id="username" placeholder="請輸入帳號">
@@ -36,15 +36,15 @@
     </div>
 
     <div class="container" id="welcome-interface">
-        <h2>🎉 跨網域登入成功！</h2>
-        <p>歡迎回來，<span id="display-username" style="color: #007BFF; font-weight: bold;">使用者</span></p>
-        <p>這個網頁完全不受 Google 多重帳號衝突的影響。</p>
+        <h2>🎉 登入成功</h2>
+        <p><span id="display-name" style="color: #007BFF; font-weight: bold; font-size: 20px;">姓名</span>，歡迎登入系統！</p>
+        <p>您的權限已確認完畢。</p>
         <button class="logout-btn" onclick="handleLogout()">登出</button>
     </div>
 
     <script>
-        // ⚠️【請把下方引號內換成你剛剛在第二步複製的 GAS 網頁應用程式網址】
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzICi4hs-4dBeCRVpgta4EPn_svmW2aWeWq9vfQj8PYyoUCQeg1kGe0esyDi5i_C5Oufg/exec";
+        // ⚠️【記得把下方網址換成你的 GAS 網頁應用程式網址】
+        const GAS_API_URL = "這裡貼上你的GAS網址";
 
         function handleLogin() {
             const user = document.getElementById('username').value.trim();
@@ -57,11 +57,9 @@
                 return;
             }
 
-            // 按鈕進入讀取狀態，避免重複點擊
             loginBtn.innerText = "驗證中...";
             loginBtn.disabled = true;
 
-            // 使用標準 Fetch API 發送連線給 GAS
             fetch(GAS_API_URL, {
                 method: "POST",
                 body: JSON.stringify({ username: user, password: pass })
@@ -75,7 +73,8 @@
                     errorMsg.style.display = 'none';
                     document.getElementById('login-interface').style.display = 'none';
                     document.getElementById('welcome-interface').style.display = 'block';
-                    document.getElementById('display-username').innerText = result.username;
+                    // 這裡把後端傳來的 result.name (姓名) 填入畫面中
+                    document.getElementById('display-name').innerText = result.name;
                 } else {
                     errorMsg.style.display = 'block';
                 }
@@ -84,7 +83,7 @@
                 console.error("錯誤:", error);
                 loginBtn.innerText = "登入系統";
                 loginBtn.disabled = false;
-                alert("連線失敗，請確認你的 GAS 網址是否正確，且有設定為公開(所有人)。");
+                alert("連線失敗，請確認網址是否正確。");
             });
         }
 
